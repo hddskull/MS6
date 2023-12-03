@@ -1,0 +1,67 @@
+{
+  "$schema": "https://www.krakend.io/schema/v2.5/krakend.json",
+  "version": 3,
+  "endpoints": [
+    {
+      "endpoint": "/v1/users",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/users",
+          "method": "GET",
+          "host": [
+            "http://users_service"
+          ],
+          "is_collection": true,
+          "mapping": {
+            "collection": "users"
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/user_data/{user_id}",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/user_data/{user_id}",
+          "method": "GET",
+          "host": [
+            "http://users_service"
+          ]
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/user_docs",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/user_docs",
+          "method": "GET",
+          "host": [
+            "http://documents_service"
+          ],
+          "is_collection": true,
+          "mapping": {
+            "collection": "documents"
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/add_doc",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/add_doc",
+          "method": "POST",
+          "host": [
+            "http://documents_service"
+          ]
+        }
+      ]
+    }
+  ],
+  "extra_config": {}
+}
