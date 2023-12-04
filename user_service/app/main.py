@@ -24,11 +24,6 @@ db: List[User] = [
     )
 ]
 
-@app.get("/")
-async def root():
-    return {"message": "Hello, World!"}
-
-
 @app.get("/users")
 async def fetch_users():
     return db
