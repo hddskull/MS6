@@ -1,44 +1,56 @@
-from fastapi import FastAPI, HTTPException
-from typing import Optional, List
-from app.model.document import Document, DocumentUpdate
+from fastapi import FastAPI, HTTPException, Depends
+from typing import Optional, List, Annotated
 from uuid import UUID
+from app.model.document import Document, DocumentUpdate
+from sqlalchemy.orm import Session
+import app.db.database as database
 
 # uvicorn main:app --reload
 app = FastAPI()
+database.Base.metadata.create_all(bind=database.engine)
 
-documents: List[Document] = [
-    Document(
-        id=UUID('febc6a15-b9ad-4e0f-8b67-d8494c277e2b'),
-        owner_id = UUID('86f053a0-0dd1-4439-ba43-bdf586220bd2'),
-        title="Lorem Ipsum",
-        body="ewdfwe"
-    ),
-    Document(
-        id=UUID('54965acc-3798-4a7d-b61d-962ff7d7dbc8'),
-        owner_id=UUID('1f4ee684-6856-4a17-8ff2-e0492d3c9099'),
-        title="Daft Punk - Around the world",
-        body="wefwef"
-    )
-]
 
+def get_db():
+    db = database.SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+db_dependency = Annotated[Session, Depends(get_db)]
 
 @app.get("/user_docs")
-async def fetch_docs():
-    return documents
+async def fetch_docs(db: db_dependency):
+    result = db.query(database.DBDoc).offset(0).limit(100).all()
+    return result
 
 @app.get("/doc_by_id/{owner_id}")
-async def fetch_docs(owner_id: UUID):
-    for doc in documents:
-        if doc.owner_id == owner_id:
-            return doc
-    return documents
+async def fetch_docs(owner_id: UUID, db: db_dependency):
+    result = db.query(database.DBDoc).filter(database.DBDoc.owner_id == owner_id).first()
+    print(owner_id)
+    print(result)
+    if not result:
+        raise HTTPException(
+            status_code=404,
+            detail=f'doc with such owner id is not found. owner_id: {owner_id}'
+        )
+    return result
 
-@app.post("/add_doc")
-async def add_doc(doc: Document):
-    documents.append(doc)
-    return {"id": doc.id}
-#
-#
+
+@app.post('/add_doc')
+async def add_doc(doc: Document, db: db_dependency):
+    db_doc = database.DBDoc(
+        id=doc.id,
+        owner_id=doc.owner_id,
+        title=doc.title,
+        body=doc.body,
+    )
+    db.add(db_doc)
+    db.commit()
+    db.refresh(db_doc)
+
+
 # @app.delete("/documents/{doc_id}")
 # async def delete_doc(doc_id: UUID):
 #     for current_doc in documents:
