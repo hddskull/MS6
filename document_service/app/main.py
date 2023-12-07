@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, status
 from typing import Optional, List, Annotated
 from uuid import UUID
 from app.model.document import Document, DocumentUpdate
@@ -20,10 +20,17 @@ def get_db():
 
 db_dependency = Annotated[Session, Depends(get_db)]
 
+
+@app.get("/health", status_code=status.HTTP_200_OK)
+async def doc_health():
+    return {'message': 'service is active'}
+
+
 @app.get("/user_docs")
 async def fetch_docs(db: db_dependency):
     result = db.query(database.DBDoc).offset(0).limit(100).all()
     return result
+
 
 @app.get("/doc_by_id/{owner_id}")
 async def fetch_docs(owner_id: UUID, db: db_dependency):
@@ -49,7 +56,7 @@ async def add_doc(doc: Document, db: db_dependency):
     db.add(db_doc)
     db.commit()
     db.refresh(db_doc)
-
+    return {"id": doc.id}
 
 # @app.delete("/documents/{doc_id}")
 # async def delete_doc(doc_id: UUID):

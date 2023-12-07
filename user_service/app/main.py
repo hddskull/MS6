@@ -1,5 +1,5 @@
 import requests
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status
 from typing import List
 from app.model.user import User, Gender, Role, UserUpdateRequest
 from uuid import UUID
@@ -21,8 +21,19 @@ db: List[User] = [
         last_name="Jones",
         gender=Gender.male,
         roles=[Role.admin, Role.teacher]
+    ),
+    User(
+        id=UUID('e1161271-c9d1-47b3-95d1-d879bd137a2a'),
+        first_name='Test',
+        last_name="Test",
+        gender=Gender.male,
+        roles=[Role.admin]
     )
 ]
+
+@app.get("/health", status_code=status.HTTP_200_OK)
+async def user_health():
+    return {'message': 'service is active'}
 
 @app.get("/users")
 async def fetch_users():
