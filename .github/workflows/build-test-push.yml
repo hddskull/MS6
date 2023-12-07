@@ -17,6 +17,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: install dependencies
+        run: pip install psycopg2-binary
+
       - name: Prepare for tests (compose up)
         run: docker compose up -d --build
 
@@ -32,6 +35,7 @@ jobs:
   build_and_push_user_service:
     name: Build and push user service to DockerHub
     runs-on: ubuntu-latest
+    needs: [test]
     steps:
       - uses: actions/checkout@v3
 
@@ -52,6 +56,7 @@ jobs:
   build_and_push_document_service:
     name: Build and push document service to DockerHub
     runs-on: ubuntu-latest
+    needs: [test]
     steps:
       - uses: actions/checkout@v3
 
