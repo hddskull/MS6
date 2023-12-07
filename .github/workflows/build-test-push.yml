@@ -11,6 +11,24 @@ on:
 
 
 jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Prepare for tests (compose up)
+        run: docker compose up -d --build
+
+      - name: Run integration test
+        run: python tests/integration.py
+
+      - name: Run e2e test
+        run: python tests/e2e.py
+
+      - name: Clean up (compose down)
+        run: docker compose down
+
   build_and_push_user_service:
     name: Build and push user service to DockerHub
     runs-on: ubuntu-latest
