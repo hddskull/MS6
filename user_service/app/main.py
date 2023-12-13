@@ -35,6 +35,12 @@ db: List[User] = [
 async def user_health():
     return {'message': 'service is active'}
 
+
+@app.get("/keycloak", status_code=status.HTTP_200_OK)
+async def keycloak():
+    return {'message': 'keycloak success'}
+
+
 @app.get("/users")
 async def fetch_users():
     return db

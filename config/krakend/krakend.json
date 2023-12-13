@@ -3,6 +3,27 @@
   "version": 3,
   "endpoints": [
     {
+      "endpoint": "/v1/keycloak",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "RS256",
+          "jwk_url": "http://keycloak:8080/realms/master/protocol/openid-connect/certs",
+          "roles_key": "realm_access.roles",
+          "roles_key_is_nested": true,
+          "roles": ["admin"],
+          "disable_jwk_security": true
+        }
+      },
+      "backend": [
+        {
+          "url_pattern": "/keycloak",
+          "host": [
+            "http://users_service"
+          ]
+        }
+      ]
+    },
+    {
       "endpoint": "/v1/users",
       "method": "GET",
       "backend": [

@@ -3,7 +3,7 @@ import requests
 
 # from document_service.app.model.document import Document
 
-KRAKEND_URL = "http://127.0.0.1:8080"
+KRAKEND_URL = "http://127.0.0.1:8402"
 test_user = {
     "id": "e1161271-c9d1-47b3-95d1-d879bd137a2a",
     "first_name": "Test",
