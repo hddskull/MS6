@@ -33,7 +33,7 @@ services:
     restart: always
     command: start-dev
     ports:
-      - 8080:8080
+      - "8402:8080"
     environment:
       KEYCLOAK_ADMIN_PASSWORD: admin
       KEYCLOAK_ADMIN: admin
@@ -44,9 +44,17 @@ services:
       - ./config/krakend:/etc/krakend
     platform: linux/amd64
     ports:
-      - "8402:8080"
+      - "8080:8080"
     command: [ "run", "-d", "-c", "/etc/krakend/krakend.json" ]
     depends_on:
       - users_service
       - documents_service
       - keycloak
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+#    networks:
+#      - jaeger-example
