@@ -70,6 +70,8 @@ jobs:
         folder-id: ${{ secrets.YC_FOLDER_ID }}
         revision-image-url: cr.yandex/${{ secrets.YC_REGISTRY_ID }}/ms-user-services:latest
         revision-service-account-id: ${{ secrets.YC_SA_ID }}
+        revision-env: PORT=8080
+
 
   build_and_push_document_service:
     name: Build and push document service to DockerHub
