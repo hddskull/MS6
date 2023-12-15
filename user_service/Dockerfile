@@ -1,16 +1,20 @@
 FROM python:3.10
 
+# Выбор папки, в которой будет вестись работа
 WORKDIR /code
 
-COPY ./requirements.txt /code/requirements.txt
-
+# Установка зависимостей проекта
+COPY ./requirements.txt /code/
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
+# Перенос проекта в образ
 COPY ./app /code/app
 
-#COPY ./entrypoint.sh /code/entrypoint.sh
-#RUN chmod +x /code/entrypoint.sh
-#EXPOSE 80
-#ENTRYPOINT ["/code/entrypoint.sh"]
+# Копирование файлов alembic
+COPY ./entrypoint.sh /code/entrypoint.sh
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "${PORT}"]
+RUN chmod +x /code/entrypoint.sh
+
+EXPOSE 80
+
+ENTRYPOINT ["/code/entrypoint.sh"]
