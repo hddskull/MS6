@@ -136,4 +136,8 @@ async def update_user(user_update: UserUpdateRequest, user_id: UUID):
     )
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=int(os.environ.get('PORT')), reload=True)
+    PORT = os.environ.get('PORT')
+    if os.environ.get('PORT') is None:
+        uvicorn.run("main:app", host="0.0.0.0", port=80, reload=True)
+    else:
+        uvicorn.run("main:app", host="0.0.0.0", port=int(os.environ.get('PORT')), reload=True)
