@@ -1,7 +1,9 @@
+import os
 import requests
+import uvicorn
 from fastapi import FastAPI, HTTPException, status
 from typing import List
-from app.model.user import User, Gender, Role, UserUpdateRequest
+from model.user import User, Gender, Role, UserUpdateRequest
 from uuid import UUID
 
 # uvicorn user_service.main:user_service --reload
@@ -132,3 +134,6 @@ async def update_user(user_update: UserUpdateRequest, user_id: UUID):
         status_code=404,
         detail=f'user with {user_id} does not exist'
     )
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=int(os.environ.get('PORT')), reload=True)
